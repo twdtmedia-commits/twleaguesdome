@@ -1,0 +1,44 @@
+
+/* --- Julius Rotator Sizing Fix (2025-09-16) --- */
+.final-rot, .rotator, .rotator-container, .carousel, .slider, .slides, .slide-track, .glide, .swiper {
+  max-width: 100%;
+  width: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+}
+/* Provide a flexible height: desktop gets 56.25% of width (16:9), mobile capped */
+.final-rot, .rotator, .rotator-container, .carousel, .slider {
+  position: relative;
+  aspect-ratio: 16 / 9;
+}
+@media (max-width: 600px) {
+  .final-rot, .rotator, .rotator-container, .carousel, .slider {
+    aspect-ratio: unset;
+    max-height: 60vh;
+  }
+}
+/* Slides take full space */
+.final-rot .slide, .rotator .slide, .carousel .slide, .slider .slide, .slides .slide, .slide-track > div {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* Images constrained to container; no overflow */
+.final-rot img, .rotator img, .carousel img, .slider img, .slides img, .slide-track img, .glide img, .swiper img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+/* Ensure arrows/dots sit above content if present */
+.final-rot .arrow, .rotator .arrow, .carousel .arrow, .slider .arrow,
+.final-rot .dot, .rotator .dot, .carousel .dot, .slider .dot {
+  position: absolute;
+  z-index: 2;
+}
+/* Prevent layout shift if images load slowly */
+.final-rot, .rotator, .carousel, .slider { background: transparent; }

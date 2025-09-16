@@ -1,0 +1,370 @@
+/* v6 SAFE patch */
+#hero, .hero, .hero-card { margin-top: 8px !important; }
+.countdown, .countdown-pill, .hero-countdown, .ticker, #countdown, #countdown-pill, #heroCountdown { display:none !important; }
+
+
+/* ===== ALWAYS-ON HEADER + AUDIO (FORCE FIXED) ===== */
+:root{ --twHeaderH:56px; --twAudioH:48px; }
+header{ position:fixed !important; top:0 !important; left:0; right:0; z-index:100 !important; background-color:#0b0d10; }
+.tw-audio-bar{ position:fixed !important; top:var(--twHeaderH) !important; left:0; right:0; z-index:98 !important; background-color:#0f1116; }
+/* Push content below fixed bars */
+body{ padding-top: calc(var(--twHeaderH) + var(--twAudioH)); }
+/* Anchors land below bars */
+:target{ scroll-margin-top: calc(var(--twHeaderH) + var(--twAudioH) + 12px); }
+/* If a subbar exists, keep it below header+audio */
+.subbar{ position:sticky; top: calc(var(--twHeaderH) + var(--twAudioH)); z-index:40; }
+
+
+/* === TW Mobile Scrollable Nav — CSS-only v1 === */
+@media (max-width: 600px) {
+  :root { --twHeaderH: 50px; --twAudioH: 46px; }
+
+  /* Layout header: brand | nav takes remaining width */
+  header .wrap { display:grid !important; grid-template-columns:auto 1fr; align-items:center; gap:10px; padding: 6px 10px; }
+  header .brand { min-width: 0; }
+  header nav { min-width: 0; display:block !important; }
+  .nav-toggle { display: none !important; } /* ensure no hamburger */
+
+  /* Swipeable nav row */
+  header nav ul {
+    display:flex !important;
+    flex-wrap:nowrap !important;
+    gap:12px !important;
+    overflow-x:auto !important;
+    overflow-y:hidden;
+    white-space:nowrap !important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+    margin:0; padding:4px 0 6px;
+  }
+  header nav ul::-webkit-scrollbar { display:none; }
+  header nav li { flex:0 0 auto; }
+  header nav a { display:inline-block; }
+
+  /* Player spacing (keep original JS/markup) */
+  .tw-audio-bar { padding: 6px 10px !important; }
+  .tw-audio-title { display:none !important; }
+  .tw-audio-controls { display:flex !important; gap:6px !important; }
+  .tw-audio-controls button { padding:6px 8px !important; font-size:12px !important; }
+  .tw-audio-now { height:18px !important; margin-top:4px; }
+  .tw-audio-ticker { font-size:12px !important; }
+
+  /* Hide prev/next on very narrow screens to avoid cramping */
+  @media (max-width: 420px) {
+    .tw-audio-controls [data-action="prev"],
+    .tw-audio-controls [data-action="next"] { display:none !important; }
+  }
+
+  /* Tracklist as bottom sheet */
+  .tw-audio-list .panel {
+    position:fixed !important;
+    left:0 !important; right:0 !important; bottom:0 !important; top:auto !important;
+    width:100% !important;
+    height:min(55vh, calc(100vh - var(--twHeaderH,50px) - var(--twAudioH,46px))) !important;
+    transform:translateY(100%) !important;
+    transition:transform .24s ease-in-out;
+    z-index:9998 !important;
+    box-shadow:0 -20px 40px rgba(0,0,0,.45) !important;
+    background-color:#0b0d10;
+  }
+  .tw-audio-list.open .panel { transform:translateY(0) !important; }
+  .tw-audio-list .grid { grid-template-columns:1fr !important; padding:12px; gap:8px; }
+  .tw-audio-list .divider { display:none !important; }
+}
+
+
+/* Community two-column list */
+.community-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 24px; align-items:start; margin-top:8px; }
+.community-grid a { text-decoration:none; }
+.community-grid .todo-link { color:#94a3b8; opacity:.9; font-style:italic; }
+@media (max-width:720px){ .community-grid { grid-template-columns:1fr; } }
+
+/* === Right-rail banner placeholders === */
+.tw-promo-banner{
+  float: right;
+  width: 320px;
+  min-height: 180px;
+  aspect-ratio: 16 / 9; /* default */
+  margin: 8px 0 16px 24px;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
+    repeating-linear-gradient(45deg, rgba(125,211,252,.25) 0 8px, rgba(125,211,252,.08) 8px 16px),
+    #0f131a;
+  box-shadow: 0 6px 18px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.08);
+  position: relative;
+}
+#tw-banner-bottom{ aspect-ratio: 4 / 3; min-height: 240px; } /* second box taller */
+.tw-promo-banner span{
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: .96rem; color: #dbeafe; text-align: center; padding: 8px; opacity: .92;
+}
+/* Responsive: stack on mobile */
+@media (max-width: 1100px){
+  .tw-promo-banner{ float: none; width: 100%; margin: 12px 0; }
+}
+
+/* Responsive: stack banners inside content on small viewports */
+@media (max-width: 1100px){
+  .hero-banner, .schedule-banner{
+    position: static;
+    width: 100%;
+    margin: 10px 0;
+  }
+}
+
+
+/* Force hero headline gold (override links/gradients) */
+.tw-gold-hero { color:#f6c75e !important; background:none !important; -webkit-text-fill-color:#f6c75e; }
+.tw-gold-hero * { color:#f6c75e !important; -webkit-text-fill-color:#f6c75e; }
+
+/* Force hero headline gold & banner corner position */
+.tw-gold-hero { color:#f6c75e !important; background:none !important; -webkit-text-fill-color:#f6c75e; }
+.hero-banner{
+  position:absolute; top:12px; right:12px; width:320px;
+  aspect-ratio:16/9; min-height:180px; border-radius:12px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
+    repeating-linear-gradient(45deg, rgba(125,211,252,.25) 0 8px, rgba(125,211,252,.08) 8px 16px),
+    #0f131a;
+  color:#dbeafe; display:grid; place-items:center; text-align:center; padding:8px;
+  box-shadow:0 6px 18px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.08);
+}
+@media (max-width:1100px){
+  .hero-banner{ position:static; width:100%; margin:10px 0; }
+}
+.tw-grad-pgb {
+  background: linear-gradient(90deg,#ec4899,#10b981,#60a5fa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lane-sep{ height:1px; margin:16px 0; border-radius:2px; background:linear-gradient(90deg,#ef4444,#3b82f6); opacity:.65; }
+
+
+/* Mid-lane wide banner placeholder (16:9) */
+.tw-promo-banner.mid-banner{
+  width:100%;
+  aspect-ratio:16/9;
+  min-height:260px;
+  margin:10px 0 4px 0;
+  display:grid; place-items:center; text-align:center; padding:10px;
+  border-radius:14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
+    repeating-linear-gradient(45deg, rgba(125,211,252,.25) 0 8px, rgba(125,211,252,.08) 8px 16px),
+    #0f131a;
+  color:#dbeafe;
+  box-shadow:0 6px 18px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.08);
+}
+.tw-promo-banner.mid-banner small{ opacity:.8; display:block; margin-top:4px; }
+/* Tiny heading icon spacing */
+.card h1 .icon, .card h2 .icon, .card h3 .icon{ opacity:.95; margin-right:.25em; }
+/* Helper caption text for all banner placeholders */
+.tw-promo-banner small{ opacity:.8; display:block; margin-top:4px; font-size:.9em; }
+
+/* Compact banner for Ogron's Statlines (left-aligned, non-overlapping) */
+.tw-promo-banner.ogron-banner{
+  width:520px;
+  max-width:100%;
+  aspect-ratio:16/9;
+  min-height:180px;
+  margin:8px 0 8px 0;
+  display:grid; place-items:center; text-align:center; padding:8px 10px;
+  border-radius:14px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
+    repeating-linear-gradient(45deg, rgba(125,211,252,.25) 0 8px, rgba(125,211,252,.08) 8px 16px),
+    #0f131a;
+  color:#dbeafe;
+  box-shadow:0 6px 18px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.08);
+}
+@media (max-width:1100px){
+  .tw-promo-banner.ogron-banner{ width:100%; min-height:160px; }
+}
+
+
+/* Right-align Ogron's banner inside its card */
+.card .tw-promo-banner.ogron-banner{ margin-left:auto; margin-right:0; }
+
+/* Hide any slider/rotator pagination dots */
+.rotator-dots, .slider-dots, .carousel-dots, .swiper-pagination, .dots, .pagination-dots { display:none !important; }
+
+/* Apply thin separator lines between links inside selected cards */
+.linksep-card a{
+  display:block;
+  padding:6px 0;
+  border-top:1px solid rgba(59,130,246,.35);
+}
+.linksep-card a:first-of-type{ border-top:none; }
+
+
+/* Auto-use images if placed in assets/images/ */
+.hero-banner{
+  background: url('../images/banner_hero.jpg') center/cover no-repeat,
+              linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
+              repeating-linear-gradient(45deg, rgba(125,211,252,.25) 0 8px, rgba(125,211,252,.08) 8px 16px),
+              #0f131a;
+}
+.schedule-banner{
+  background: url('../images/banner_schedule.jpg') center/cover no-repeat,
+              linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
+              repeating-linear-gradient(45deg, rgba(125,211,252,.25) 0 8px, rgba(125,211,252,.08) 8px 16px),
+              #0f131a;
+}
+.ogron-banner{
+  background: url('../images/ogron_banner.jpg') center/cover no-repeat,
+              linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02)),
+              repeating-linear-gradient(45deg, rgba(125,211,252,.25) 0 8px, rgba(125,211,252,.08) 8px 16px),
+              #0f131a;
+}
+/* No bullets, consistent separators */
+.linksep-card ul.no-bullets, .linksep-card li.no-bullets{ list-style:none; margin:0; padding-left:0; }
+.linksep-card li{ border-top:1px solid rgba(59,130,246,.35); padding:6px 0; }
+.linksep-card li:first-child{ border-top:none; }
+.linksep-card a{ display:inline-block; }
+
+
+/* === Remove link separators globally, add soft spacing === */
+.linksep-card li{ border-top:none !important; }
+.linksep-card a{ border-top:none !important; }
+.card ul{ list-style:none; padding-left:0; margin:0; }
+.card ul li{ margin:6px 0; padding:0; }
+.card a{ font-weight:400 !important; }
+/* Kill any bullet pseudo-elements */
+.card ul li::marker{ content:''; }
+.card ul li::before{ content:''; }
+
+
+/* dotfix2: nuke all list-style markers in bottom cards */
+.card ul{ list-style: none !important; }
+.card ul li::marker{ content: '' !important; }
+.card ul li::before{ content: '' !important; }
+
+
+/* --- Ogron GIF slot (small square under title) --- */
+.gif-slot{
+  width: 90px; height: 90px;
+  margin-top:0.8rem;
+  border-radius:16px;
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:
+    repeating-linear-gradient(45deg, rgba(37,71,103,.45) 0 12px, rgba(24,46,71,.45) 12px 24px);
+  outline:1px solid rgba(120,180,220,.12);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.25) inset;
+}
+
+.gif-slot img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:inherit;
+}
+
+.gif-slot .helper{
+  position:relative;
+  z-index:1;
+  font-size:.78rem;
+  line-height:1.15;
+  text-align:center;
+  color:rgba(200,220,240,.7);
+  padding:.5rem;
+}
+
+/* responsive: slightly smaller on narrow screens */
+@media (max-width: 900px){
+  .gif-slot{ width: 75px; height: 75px; }
+}
+
+
+/* CLEAN lists in bottom 5-card lane */
+#community .links-clean ul,
+#community .links-clean li { list-style: none; }
+#community .links-clean ul { margin: 0; padding: 0; }
+#community .links-clean li { margin: 0; padding: 0; }
+#community .links-clean p { margin: 8px 0; padding: 0; border: 0; }
+#community .links-clean a { border: 0 !important; box-shadow: none !important; text-decoration: none; }
+
+/* Remove accidental marker dots that some browsers render on stray li elements */
+#community .links-clean li::marker { content: ""; }
+
+
+
+/* === Ogron's Statlines layout === */
+.card:has(> h3:contains("Ogron")) { position: relative; }
+.ogron-gif { position: absolute; top: 12px; left: 12px; width: 84px; height: 84px; border-radius: 14px; overflow: hidden; z-index: 1; opacity: 0.95; }
+.ogron-gif img { width: 100%; height: 100%; object-fit: cover; image-rendering: auto; }
+
+.ogron-links { position: relative; z-index: 2; }
+.ogron-links.two-col { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); column-gap: 28px; row-gap: 6px; padding-left: 118px; }
+.ogron-links ul.clean { list-style: none; margin: 0; padding: 0; }
+.ogron-links ul.clean li { margin: 6px 0; }
+.ogron-links a { text-decoration: none; border: 0; box-shadow: none; }
+
+@media (max-width: 860px) {
+  .ogron-gif { width: 64px; height: 64px; }
+  .ogron-links.two-col { grid-template-columns: 1fr; padding-left: 88px; }
+}
+
+/* Sweep: moved inline style */
+.sweep-inline-1{padding:6px 10px;border-radius:10px;font-weight:700;padding:6px 10px;border-radius:10px;font-weight:700;padding:6px 10px;border-radius:10px;font-weight:700;background:#111216;border:1px solid var(--border);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+
+
+/* === YT & Classics two-column layout (mirrors Ogron) === */
+.ytc-links { position: relative; z-index: 2; }
+.ytc-links.two-col { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); column-gap: 28px; row-gap: 6px; }
+.ytc-links ul.clean { list-style: none; margin: 0; padding: 0; }
+.ytc-links ul.clean li { margin: 6px 0; }
+.ytc-links a { text-decoration: none; border: 0; box-shadow: none; }
+
+@media (max-width: 860px) {
+  .ytc-links.two-col { grid-template-columns: 1fr; }
+}
+
+
+
+/* === Enforce 5-card grid for Community on desktop === */
+#community .community-lane{ display:grid; gap:18px; grid-template-columns: repeat(5, minmax(0,1fr)); align-items:start; }
+@media (max-width: 1200px){ #community .community-lane{ grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 1000px){ #community .community-lane{ grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 820px){  #community .community-lane{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px){  #community .community-lane{ grid-template-columns: 1fr; } }
+/* Neutralize legacy .cards.cols-4 in this section */
+#community .cards, #community .cards.cols-4{ grid-template-columns: unset !important; }
+
+/* Tighten Getting Started after header */
+#community .community-lane .card:first-of-type h3 + p { margin-top: 6px; }
+
+/* Plain white, non-clickable request line */
+.tw-request{color:#fff;pointer-events:none;text-decoration:none;opacity:0.95;display:block;margin-bottom:6px}
+
+
+/* ===== Mobile Menu Variant A + Home Icon fix (baked 2025-09-16) ===== */
+@media (max-width: 600px){
+  /* Home icon spacing inside TW Draft badge */
+  a.badge{ position: relative; padding-right: 28px; }
+  a.badge svg[aria-hidden="true"]{ position:absolute; right:8px; top:8px; width:14px; height:14px; opacity:.95; }
+
+  /* Hamburger button & overlay (no layout shift) */
+  .j-ham-btn{position:fixed; right:10px; top:10px; z-index:10010; width:44px; height:44px; border-radius:999px; border:0; background:#111; color:#fff; font-size:22px; line-height:44px; text-align:center; box-shadow:0 8px 24px rgba(0,0,0,.3);}
+  .j-ham-btn:active{transform:scale(.98)}
+  .j-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:10000; opacity:0; pointer-events:none; transition:opacity .25s ease;}
+  .j-menu{position:fixed; z-index:10005; background:#0e0e0e; color:#fff; border-radius:16px 0 0 16px; box-shadow:0 30px 80px rgba(0,0,0,.5); transform:translateX(100%); transition:transform .28s ease; width:80vw; max-width:320px; top:0; right:0; height:100vh; display:flex; flex-direction:column; overflow:hidden;}
+  .j-menu .j-menu-header{display:flex; align-items:center; justify-content:space-between; padding:14px 16px; font-weight:700; letter-spacing:.3px; border-bottom:1px solid rgba(255,255,255,.08);}
+  .j-menu .j-close{background:transparent; border:0; color:#fff; font-size:20px; width:36px; height:36px; border-radius:9px;}
+  .j-menu .j-menu-list{list-style:none; padding:10px 10px 24px; margin:0; overflow:auto; -webkit-overflow-scrolling:touch;}
+  .j-menu .j-menu-list li{border-bottom:1px solid rgba(255,255,255,.06);}
+  .j-menu .j-menu-list a{display:block; padding:14px 10px; color:#fff; text-decoration:none; font-weight:600;}
+  .j-open .j-backdrop{opacity:1; pointer-events:auto;}
+  .j-open .j-menu{transform:translateX(0);}
+}
+@media (min-width: 601px){
+  .j-ham-btn,.j-backdrop,.j-menu{display:none !important;}
+}
