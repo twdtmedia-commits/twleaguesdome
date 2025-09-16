@@ -1,0 +1,197 @@
+
+/* TW Audio Preview — namespaced + safe (no collisions) */
+.tw-audio-bar{position:sticky; top:var(--twHeaderH,56px); z-index:98; background:linear-gradient(135deg,#1a1b22,#0f1114); border-bottom:1px solid rgba(255,255,255,.08)}
+.tw-audio-bar .wrap{display:flex; align-items:center; gap:14px; padding:10px 16px;}
+.tw-audio-title{font:800 18px/1 Inter,system-ui; letter-spacing:.2px}
+.tw-audio-controls{display:flex; gap:8px; flex-wrap:wrap}
+.tw-audio-controls button{border:1px solid rgba(255,255,255,.25); background:rgba(0,0,0,.35); color:#fff; border-radius:12px; padding:8px 12px; font-weight:800; cursor:pointer; font-family:"Permanent Marker",cursive}
+.tw-audio-controls button.icon{width:42px; height:36px; display:flex; align-items:center; justify-content:center; padding:0}
+.tw-audio-controls button[aria-pressed="true"]{outline:2px solid #ff7a00}
+.tw-audio-now{flex:1; min-width:160px; overflow:hidden; position:relative; height:20px}
+.tw-audio-ticker{position:absolute; white-space:nowrap; will-change:transform; animation:tw-scroll 12s linear infinite; left:100%;}
+@keyframes tw-scroll{ from { transform:translateX(0); } to { transform:translateX(-200%); } }
+.tw-audio-list{position:relative}
+.tw-audio-list .panel{position:fixed; right:-420px; top:var(--twHeaderH,56px); width:420px; max-width:90vw; background:#0f1114; border-left:1px solid rgba(255,255,255,.08); height:calc(100vh - var(--twHeaderH,56px)); transition:transform .35s ease; transform:translateX(0); box-shadow:-20px 0 40px rgba(0,0,0,.4); z-index:97}
+.tw-audio-list.open .panel{ right:0; transform:translateX(-420px); }
+.tw-audio-list .panel .hd{padding:12px 14px; font-weight:800; border-bottom:1px solid rgba(255,255,255,.08)}
+.tw-audio-list .grid{display:grid; grid-template-columns:1fr 1fr; gap:0; height:calc(100% - 48px)}
+.tw-audio-list .col{padding:10px; overflow:auto}
+.tw-audio-list .divider{position:absolute; top:48px; bottom:0; left:calc(50% - .5px); width:1px; background:rgba(255,255,255,.12)}
+.tw-audio-track{display:block; width:100%; text-align:left; padding:10px 12px; margin:6px 0; border-radius:10px; border:1px solid rgba(255,255,255,.08); background:#14171c; color:#fff; cursor:pointer; font-weight:700}
+.tw-audio-track.active{border-color:#ff7a00; box-shadow:0 0 0 2px rgba(255,122,0,.35) inset}
+/* Adjust scroll-margin-top to consider both sticky bars (header + audio) */
+:root{ --twHeaderH: 56px; --twAudioH: 0px; }
+section[id], #sprackle-embed{ scroll-margin-top: calc(var(--twHeaderH) + var(--twAudioH) + 10px); }
+
+/* Auto-size tracklist panel to content, max 50vh */
+.tw-audio-list .panel {
+  height: auto;
+  max-height: 50vh;
+}
+.tw-audio-list .grid { height: auto; }
+
+
+
+
+
+
+/* Graffiti ink style — Subspace 30 Years Mix (white ink) */
+.tw-audio-title {
+  font-family: "Permanent Marker", cursive !important;
+  font-size: 20px !important;
+  color: #ffffff !important;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+}
+
+
+/* Micro-fix: slightly reduce audio title size on desktop to calm hierarchy */
+@media (min-width: 901px){
+  .tw-audio-title{ font-size: 18px !important; }
+}
+
+
+
+/* === Mobile audio fixes (<=900px) === */
+@media (max-width: 900px){
+  .tw-audio-list .grid{ grid-template-columns: 1fr !important; gap: 0 !important; }
+  .tw-audio-list .divider{ display: none !important; }
+  .tw-audio-now, .tw-audio-ticker{ pointer-events: none !important; }
+  .tw-audio-controls{ position: relative; z-index: 2; }
+  .tw-audio-bar .wrap{ position: relative; }
+}
+
+
+
+/* === Mobile audio dropdown (overrides bottom-sheet) === */
+@media (max-width: 900px){
+  .tw-audio-list .panel{
+    position: fixed !important;
+    left: 0 !important; right: 0 !important;
+    top: calc(var(--twHeaderH,50px) + var(--twAudioH,46px)) !important;
+    bottom: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 55vh !important;
+    transform: translateY(-110%) !important;
+    transition: transform .24s ease-in-out;
+    z-index: 9998 !important;
+  }
+  .tw-audio-list.open .panel{ transform: translateY(0) !important; }
+  .tw-audio-list .grid{ grid-template-columns: 1fr !important; padding: 12px !important; gap: 8px !important; }
+  .tw-audio-list .divider{ display: none !important; }
+}
+
+
+
+/* === Mobile audio fixes v2 (<=900px) === */
+@media (max-width: 900px){
+  /* Dropdown panel from button instead of bottom sheet */
+  .tw-audio-list .panel{
+    position:absolute !important;
+    top:100% !important;
+    left:0 !important;
+    right:0 !important;
+    bottom:auto !important;
+    width:100% !important;
+    height:auto !important;
+    max-height:60vh !important;
+    transform:translateY(-10px) scaleY(0) !important;
+    transform-origin:top center !important;
+    transition:transform .25s ease-in-out;
+    overflow-y:auto;
+  }
+  .tw-audio-list.open .panel{
+    transform:translateY(0) scaleY(1) !important;
+  }
+
+  /* Remove tracklist title + divider on mobile */
+  .tw-audio-list .panel .hd,
+  .tw-audio-list .panel .divider{ display:none !important; }
+
+  /* Ensure controls always clickable */
+  .tw-audio-controls{ position:relative; z-index:5 !important; }
+  .tw-audio-now, .tw-audio-ticker{ pointer-events:none !important; }
+}
+
+
+
+/* === Mobile audio dropdown under Tracklist button (<=900px) === */
+@media (max-width: 900px){
+  /* Anchor the list container to the bar wrap */
+  .tw-audio-bar .wrap{ position: relative !important; }
+  .tw-audio-list{ position: absolute !important; left: 10px !important; right: 10px !important; top: calc(100% + 6px) !important; z-index: 9999 !important; pointer-events: none; }
+  .tw-audio-list .panel{ position: relative !important; width: 100% !important; max-height: 55vh !important; height: auto !important; overflow: auto !important; border:1px solid rgba(255,255,255,.12); border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.45); transform: translateY(-8px); opacity: 0; transition: transform .18s ease, opacity .18s ease; background:#0b0d10 !important; }
+  .tw-audio-list.open{ pointer-events: auto; }
+  .tw-audio-list.open .panel{ transform: translateY(0); opacity: 1; }
+
+  /* Single-column list & clean look */
+  .tw-audio-list .grid{ grid-template-columns: 1fr !important; gap: 0 !important; height: auto !important; }
+  .tw-audio-list .divider{ display: none !important; }
+
+  /* Hide the Tracklist header/title */
+  .tw-audio-list .panel .hd{ display: none !important; }
+
+  /* Prevent the (closed) panel from covering controls */
+  .tw-audio-list:not(.open) .panel{ display: none !important; }
+
+  /* Make sure ticks don't intercept taps; controls on top */
+  .tw-audio-now, .tw-audio-ticker{ pointer-events: none !important; }
+  .tw-audio-controls{ position: relative !important; z-index: 2 !important; }
+}
+
+
+
+/* === Desktop Tracklist Dropdown (>=901px) — anchor under Tracklist button === */
+@media (min-width: 901px){
+  .tw-audio-bar .wrap{ position: relative !important; }
+  .tw-audio-list{ position: absolute !important; right: auto !important; top: calc(100% + 6px) !important; z-index: 9999 !important; pointer-events: none; }
+  .tw-audio-list .panel{
+    position: relative !important;
+    width: 420px !important;
+    max-width: 90vw !important;
+    height: auto !important;
+    max-height: 50vh !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,.45) !important;
+    background: #0b0d10 !important;
+    transform: translateY(-8px) !important;
+    opacity: 0 !important;
+    transition: transform .18s ease, opacity .18s ease !important;
+    overflow: auto !important;
+  }
+  .tw-audio-list.open{ pointer-events: auto; }
+  .tw-audio-list.open .panel{ transform: translateY(0) !important; opacity: 1 !important; }
+  .tw-audio-list .grid{ height: auto !important; grid-template-columns: 1fr 1fr !important; gap: 0 !important; }
+  .tw-audio-list .divider{ display: block !important; }
+}
+
+
+/* === FIX v2: Mobile tracklist dropdown — single column, full width, high z, clean open === */
+@media (max-width: 900px){
+  .tw-audio-bar .wrap{ position: relative !important; }
+  .tw-audio-list{ position: absolute !important; left: 10px !important; right: 10px !important; top: calc(100% + 6px) !important; z-index: 10050 !important; pointer-events: none; }
+  .tw-audio-list .panel{
+    position: relative !important;
+    width: 100% !important;
+    max-height: 60vh !important;
+    height: auto !important;
+    overflow: auto !important;
+    border: 1px solid rgba(255,255,255,.12) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,.45) !important;
+    background: #0b0d10 !important;
+    transform: translateY(-8px) !important;
+    opacity: 0 !important;
+    transition: transform .18s ease, opacity .18s ease !important;
+  }
+  .tw-audio-list.open{ pointer-events: auto; }
+  .tw-audio-list.open .panel{ transform: translateY(0) !important; opacity: 1 !important; }
+  .tw-audio-list .grid{ grid-template-columns: 1fr !important; gap: 0 !important; height: auto !important; padding: 8px 10px !important; }
+  .tw-audio-list .divider, .tw-audio-list .panel .hd{ display: none !important; }
+  .tw-audio-list:not(.open) .panel{ display: none !important; } /* prevent invisible overlay */
+}
+/* === FIX v2: Desktop z-index bump for safety === */
+@media (min-width: 901px){
+  .tw-audio-list{ z-index: 10050 !important; }
+}
